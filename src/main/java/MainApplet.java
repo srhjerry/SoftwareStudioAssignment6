@@ -45,6 +45,7 @@ public class MainApplet extends PApplet implements MouseInputListener{
 		//cp5.addButton("refresh").setLabel("refresh").setPosition(width*5/6,height/6+100).setSize(100, 20);
 		
 		 loadData(1);
+		
 		 smooth();
 
 
@@ -54,8 +55,8 @@ public class MainApplet extends PApplet implements MouseInputListener{
 
 		activech.clear();
 		
-		this.clear();
-	
+		
+	if(checkbox.getItems().size()>=characters.size()){
 		for(int i=0;i<characters.size();i++)
 		{
 			
@@ -66,6 +67,7 @@ public class MainApplet extends PApplet implements MouseInputListener{
 			}
 			
 		}
+	}
 		System.out.println("removeall");
 	}
 	public void addall(){
@@ -163,8 +165,14 @@ public class MainApplet extends PApplet implements MouseInputListener{
 	}
 	
 	public void keyPressed(KeyEvent key){
-		//this.clear();
+	//	this.clear();
+/*		for(Character i:characters){
+		checkbox.removeItem(i.getname());
+	}
+	*/
+		removeall();
 		characters.clear();
+		
 		if(key.getKey()<='7'|| key.getKey()>='1')
 			loadData(key.getKey()-'0');
 		else
@@ -179,7 +187,16 @@ public class MainApplet extends PApplet implements MouseInputListener{
 
 	private void loadData(int episode){
 		
-		
+		 checkbox = cp5.addCheckBox("checkBox")
+	                .setPosition(10, 20)
+	                .setColorForeground(color(120))
+	                .setColorActive(color(255))
+	                .setColorLabel(color(255))
+	                .setSize(15, 15)
+	                .setItemsPerRow(3)
+	                .setSpacingColumn(80)
+	                .setSpacingRow(20)
+	                ;
 			data = loadJSONObject(path+fileHead+episode+fileTail);
 		    
 			nodes = data.getJSONArray("nodes");
@@ -189,16 +206,7 @@ data = loadJSONObject(path+fileHead+episode+fileTail);
 		    
 			nodes = data.getJSONArray("nodes");
 			links = data.getJSONArray("links");
-			 checkbox = cp5.addCheckBox("checkBox")
-		                .setPosition(10, 20)
-		                .setColorForeground(color(120))
-		                .setColorActive(color(255))
-		                .setColorLabel(color(255))
-		                .setSize(20, 20)
-		                .setItemsPerRow(3)
-		                .setSpacingColumn(30)
-		                .setSpacingRow(20)
-		                ;
+			
 			
 
 			for(int i = 0; i < nodes.size(); i++){	
@@ -209,9 +217,10 @@ data = loadJSONObject(path+fileHead+episode+fileTail);
 			}
 			 for(int i=0;i<characters.size();i++)
 			 {
-				 characters.get(i).setposition(150+ran.nextInt(900), 50+ran.nextInt(500));
+				 characters.get(i).setposition(3000+ran.nextInt(800), 50+ran.nextInt(500));
 				 checkbox.addItem(characters.get(i).getname(), (float)i);
 			 }
+			 checkbox.updateLayout();
 
 	}
 

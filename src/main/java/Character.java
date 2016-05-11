@@ -68,7 +68,12 @@ public float gety(){
 	return this.y;
 }
 public int getwidth(Character i){
-	return  (int)interactCount.get(i); 
+	if(interactCount.get(i)!=null){
+		return (int)interactCount.get(i);
+	}else{
+		return 1;
+	}
+	
 }
 public String getname(){
 		
