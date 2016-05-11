@@ -1,6 +1,7 @@
 package main.java;
 
 import java.util.ArrayList;
+import java.util.*;
 
 import processing.core.PApplet;
 
@@ -12,13 +13,16 @@ public class Character {
 	
 	private MainApplet parent;
 	public float x, y, radius;
-	private String name;
+	private String name, colour;
 	private ArrayList<Character> targets;
+	private Map<Character, Object> interactCount;
 
-	public Character(MainApplet parent, String name/*, float x, float y*/){
+	public Character(MainApplet parent, String name, String colour/*, float x, float y*/){
 		targets = new ArrayList<Character>();
+		interactCount = new HashMap<Character, Object>();
 		this.parent = parent;
 		this.name = name;
+		this.colour = colour;
 		/*this.x = x;
 		this.y = y;
 		this.radius = 5;*/
@@ -34,12 +38,13 @@ public class Character {
 		parent.stroke(50);
 		for(int i = 0; i < this.targets.size(); i++){
 			parent.line(this.x, this.y, targets.get(i).x, targets.get(i).y);
-			
+			int value_tmp = (int)interactCount.get(targets.get(i)); // get target character's interact counts in episode
 		}
 	}
-	//temporary
-	public void addTarget(Character target){
+	//clear
+	public void addTarget(Character target, int value){
 		targets.add(target);
+		interactCount.put(target,value);
 	}
 	
 	public ArrayList<Character> getTargets(){

@@ -123,10 +123,10 @@ public class MainApplet extends PApplet{
 			links = data.getJSONArray("links");
 		
 			for(int i = 0; i < nodes.size(); i++){	
-				characters.add(new Character(this, nodes.getJSONObject(i).getString("name")/*, ran.nextFloat()*700, ran.nextFloat()*700*/));
+				characters.add(new Character(this, nodes.getJSONObject(i).getString("name"), nodes.getJSONObject(i).getString("colour")/*, ran.nextFloat()*700, ran.nextFloat()*700*/));
 			}
 			for(int i = 0; i < links.size(); i++){
-				characters.get(links.getJSONObject(i).getInt("source")).addTarget(characters.get(links.getJSONObject(i).getInt("target")));
+				characters.get(links.getJSONObject(i).getInt("source")).addTarget(characters.get(links.getJSONObject(i).getInt("target")), links.getJSONObject(i).getInt("value"));
 			}
 			 for(int i=0;i<characters.size();i++)
 			 {
