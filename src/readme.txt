@@ -3,3 +3,7 @@
 使用鍵盤1~7來選取讀取的json文件和載入的集數
 有使用controlp5
 另外 當一名腳色連到的target越多，他的線就會越粗
+
+遇到問題:我們原本是checkbox滑鼠點下去圖片就會立刻刷新，但不知道為何有時候會出現concurrentmodificationexception 
+解決方法:網路上說removeitem時改用iterator來remove就能解，但經過我測試還是時不時會出現
+我們最後是又多加一個refresh鍵讓他checkbox勾選完之後一次刷新才解決的

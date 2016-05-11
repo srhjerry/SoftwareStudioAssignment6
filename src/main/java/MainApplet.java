@@ -32,7 +32,7 @@ public class MainApplet extends PApplet implements MouseInputListener{
     private CheckBox checkbox;
 	private final static int width = 1200, height = 650;
 	private int myColorBackground;
-
+    private Object lock=new Object();
 	public void setup() {
 		size(width, height);
 		characters = new ArrayList<Character>();
@@ -42,6 +42,7 @@ public class MainApplet extends PApplet implements MouseInputListener{
 		cp5=new ControlP5(this);
 		cp5.addButton("addall").setLabel("ADDALL").setPosition(1100,30).setSize(100, 20);
 		cp5.addButton("removeall").setLabel("REMOVEALL").setPosition(1100,30+50).setSize(100, 20);
+		cp5.addButton("refresh").setLabel("REFRESH").setPosition(1100,30+100).setSize(100, 20);
 		//cp5.addButton("refresh").setLabel("refresh").setPosition(width*5/6,height/6+100).setSize(100, 20);
 		
 		 loadData(1);
@@ -52,10 +53,9 @@ public class MainApplet extends PApplet implements MouseInputListener{
 	}	
 	public void removeall(){
      
-
+		synchronized(lock){
 		activech.clear();
-		
-		
+		}
 	if(checkbox.getItems().size()>=characters.size()){
 		for(int i=0;i<characters.size();i++)
 		{
@@ -77,8 +77,9 @@ public class MainApplet extends PApplet implements MouseInputListener{
 			
 			if(!activech.contains(characters.get(i)))
 			{
-				
+				synchronized(lock){
 				activech.add(characters.get(i));
+				}
 			}
 			
 			if(!checkbox.getState(i))
@@ -88,15 +89,16 @@ public class MainApplet extends PApplet implements MouseInputListener{
 			}
 			
 		}
+		
 		System.out.println("addall");
 	}
 	public void mouseClicked(MouseEvent e) {
-       refresh();
+   //    refresh();
     }
 	public void refresh(){
 		
 		Iterator<Character> iteratorch = characters.iterator();
-		
+		Iterator<Character> activeit = activech.iterator();
 		while(iteratorch.hasNext()){
 			Character i=iteratorch.next();
 			if(checkbox.getState(i.getname())){
@@ -104,18 +106,21 @@ public class MainApplet extends PApplet implements MouseInputListener{
 			
 			if(!activech.contains(i))
 			{
-				
+				synchronized(lock){
 				activech.add(i);
+				}
 				
 			}
 			}else{
 				if(activech.contains(i))
 				{
-					Iterator<Character> activeit = activech.iterator();
+					
 				while(activeit.hasNext()){
 				Character j=activeit.next();
 				if(j==i){
+					synchronized(lock){
 					activeit.remove();
+					}
 				}
 				
 			}
@@ -135,6 +140,7 @@ public class MainApplet extends PApplet implements MouseInputListener{
 	public void draw() {
 		
 	  //  BasicStroke wideStroke = new BasicStroke(8.0f);
+		this.clear();
 		background(0);
 		  pushMatrix();
 		  translate(width/2 + 200, height/2);
@@ -143,6 +149,7 @@ public class MainApplet extends PApplet implements MouseInputListener{
 		  fill(myColorBackground);
 
 		  popMatrix();
+		  
 		  Iterator<Character> iterator = activech.iterator();
 	while(iterator.hasNext()){
 			Character i=iterator.next();
