@@ -40,8 +40,8 @@ public class MainApplet extends PApplet implements MouseInputListener{
 		
 			
 		cp5=new ControlP5(this);
-		cp5.addButton("addall").setLabel("ADDALL").setPosition(width*5/6,height/6).setSize(100, 20);
-		cp5.addButton("removeall").setLabel("REMOVEALL").setPosition(width*5/6,height/6+50).setSize(100, 20);
+		cp5.addButton("addall").setLabel("ADDALL").setPosition(1100,30).setSize(100, 20);
+		cp5.addButton("removeall").setLabel("REMOVEALL").setPosition(1100,30+50).setSize(100, 20);
 		//cp5.addButton("refresh").setLabel("refresh").setPosition(width*5/6,height/6+100).setSize(100, 20);
 		
 		 loadData(1);
@@ -217,7 +217,7 @@ data = loadJSONObject(path+fileHead+episode+fileTail);
 			}
 			 for(int i=0;i<characters.size();i++)
 			 {
-				 characters.get(i).setposition(3000+ran.nextInt(800), 50+ran.nextInt(500));
+				 characters.get(i).setposition(250+ran.nextInt(800), 50+ran.nextInt(500));
 				 checkbox.addItem(characters.get(i).getname(), (float)i);
 			 }
 			 checkbox.updateLayout();
