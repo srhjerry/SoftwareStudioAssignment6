@@ -1,8 +1,12 @@
 package main.java;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
+
+import javax.swing.event.MouseInputListener;
 
 import processing.core.PApplet;
 import processing.data.JSONArray;
@@ -14,7 +18,7 @@ import controlP5.*;
 * You can do major UI control and some visualization in this class.  
 */
 @SuppressWarnings("serial")
-public class MainApplet extends PApplet{
+public class MainApplet extends PApplet implements MouseInputListener{
 	private String path = "main/resources/";
 	private String fileHead = "starwars-episode-";
 	private String fileTail = "-interactions.json";
@@ -28,76 +32,134 @@ public class MainApplet extends PApplet{
     private CheckBox checkbox;
 	private final static int width = 1200, height = 650;
 	private int myColorBackground;
-	public void setup() {
 
+	public void setup() {
 		size(width, height);
 		characters = new ArrayList<Character>();
 		activech = new ArrayList<Character>();
 		
 			
 		cp5=new ControlP5(this);
-		cp5.addButton("addall").setLabel("ADDALL").setPosition(width*3/4,height/5).setSize(width/5, height/5);
-		cp5.addButton("removeall").setLabel("REMOVEALL").setPosition(width*4/5,height/5+30).setSize(100, 20);
-		 checkbox = cp5.addCheckBox("checkBox")
-	                .setPosition(10, 20)
-	                .setColorForeground(color(120))
-	                .setColorActive(color(255))
-	                .setColorLabel(color(255))
-	                .setSize(500, 400)
-	                .setItemsPerRow(3)
-	                .setSpacingColumn(30)
-	                .setSpacingRow(20)
-	                ;
+		cp5.addButton("addall").setLabel("ADDALL").setPosition(width*5/6,height/6).setSize(100, 20);
+		cp5.addButton("removeall").setLabel("REMOVEALL").setPosition(width*5/6,height/6+50).setSize(100, 20);
+		//cp5.addButton("refresh").setLabel("refresh").setPosition(width*5/6,height/6+100).setSize(100, 20);
+		
 		 loadData(1);
 		 smooth();
-		
 
-	}
-	public void addall(){
+
+	}	
+	public void removeall(){
+     
+
+		activech.clear();
+		
+		this.clear();
+	
 		for(int i=0;i<characters.size();i++)
 		{
-			if(!activech.contains(characters.get(i)))
+			
+			if(checkbox.getState(i))
 			{
-				activech.add(characters.get(i));
-			}
-			if((int)checkbox.getArrayValue(i)!=1)
-			{
-				checkbox.setArrayValue(i, (float)1);
+				checkbox.toggle(i);
 				
 			}
+			
 		}
+		System.out.println("removeall");
+	}
+	public void addall(){
+		
+		for(int i=0;i<characters.size();i++)
+		{
+			
+			if(!activech.contains(characters.get(i)))
+			{
+				
+				activech.add(characters.get(i));
+			}
+			
+			if(!checkbox.getState(i))
+			{
+				checkbox.toggle(i);
+				
+			}
+			
+		}
+		System.out.println("addall");
+	}
+	public void mouseClicked(MouseEvent e) {
+       refresh();
+    }
+	public void refresh(){
+		
+		Iterator<Character> iteratorch = characters.iterator();
+		
+		while(iteratorch.hasNext()){
+			Character i=iteratorch.next();
+			if(checkbox.getState(i.getname())){
+				
+			
+			if(!activech.contains(i))
+			{
+				
+				activech.add(i);
+				
+			}
+			}else{
+				if(activech.contains(i))
+				{
+					Iterator<Character> activeit = activech.iterator();
+				while(activeit.hasNext()){
+				Character j=activeit.next();
+				if(j==i){
+					activeit.remove();
+				}
+				
+			}
+					
+					
+					
+				}
+			}
+			System.out.println(i.getname()+": "+checkbox.getState(i.getname()));
+		}
+		
 	}
 	
-	void controlEvent(ControlEvent theEvent) {
-		  if (theEvent.isFrom(checkbox)) {
-		    myColorBackground = 0;
-		    print("got an event from "+checkbox.getName()+"\t\n");
-		    // checkbox uses arrayValue to store the state of 
-		    // individual checkbox-items. usage:
-		    println(checkbox.getArrayValue());
-		    int col = 0;
-		    for (int i=0;i<checkbox.getArrayValue().length;i++) {
-		      int n = (int)checkbox.getArrayValue()[i];
-		      print(n);
-		      if(n==1) {
-		        myColorBackground += checkbox.getItem(i).internalValue();
-		        activech.add(characters.get(i));
-		      }else {
-		    	  if(activech.contains(characters.get(i)))
-		    	  {
-		    		  activech.remove(characters.get(i));
-		    	  }
-		      }
-		    }
-		    println();    
-		  }
-		}
+
 
 
 	public void draw() {
-		for(int i = 0; i < activech.size(); i++){
-			activech.get(i).display();
+		
+	  //  BasicStroke wideStroke = new BasicStroke(8.0f);
+		background(0);
+		  pushMatrix();
+		  translate(width/2 + 200, height/2);
+		  stroke(255);
+		  strokeWeight(2);
+		  fill(myColorBackground);
+
+		  popMatrix();
+		  Iterator<Character> iterator = activech.iterator();
+	while(iterator.hasNext()){
+			Character i=iterator.next();
+			i.display();
+			if(!i.getTargets().isEmpty()){
+				Iterator<Character> iterator2 = i.getTargets().iterator();
+			while(iterator2.hasNext()){
+				Character current=iterator2.next();
+				
+				if(activech.contains(current)){
+				
+						strokeWeight(i.getwidth(current)/3+1);
+					this.line(i.getx(), i.gety(), current.getx(), current.gety());
+				}
+				}
+			}
+			
 		}
+		
 	}
 	
 	public void keyPressed(KeyEvent key){
@@ -117,11 +179,28 @@ public class MainApplet extends PApplet{
 
 	private void loadData(int episode){
 		
+		
 			data = loadJSONObject(path+fileHead+episode+fileTail);
 		    
 			nodes = data.getJSONArray("nodes");
 			links = data.getJSONArray("links");
-		
+
+data = loadJSONObject(path+fileHead+episode+fileTail);
+		    
+			nodes = data.getJSONArray("nodes");
+			links = data.getJSONArray("links");
+			 checkbox = cp5.addCheckBox("checkBox")
+		                .setPosition(10, 20)
+		                .setColorForeground(color(120))
+		                .setColorActive(color(255))
+		                .setColorLabel(color(255))
+		                .setSize(20, 20)
+		                .setItemsPerRow(3)
+		                .setSpacingColumn(30)
+		                .setSpacingRow(20)
+		                ;
+			
+
 			for(int i = 0; i < nodes.size(); i++){	
 				characters.add(new Character(this, nodes.getJSONObject(i).getString("name"), nodes.getJSONObject(i).getString("colour")/*, ran.nextFloat()*700, ran.nextFloat()*700*/));
 			}
@@ -130,8 +209,10 @@ public class MainApplet extends PApplet{
 			}
 			 for(int i=0;i<characters.size();i++)
 			 {
-				checkbox.addItem(characters.get(i).getname(), (float)i);
+				 characters.get(i).setposition(150+ran.nextInt(900), 50+ran.nextInt(500));
+				 checkbox.addItem(characters.get(i).getname(), (float)i);
 			 }
+
 	}
 
 }

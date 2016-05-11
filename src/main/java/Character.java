@@ -36,11 +36,12 @@ public class Character {
 		parent.text(this.name, this.x, this.y);
 		
 		parent.stroke(50);
-		for(int i = 0; i < this.targets.size(); i++){
+/*		for(int i = 0; i < this.targets.size(); i++){
 			parent.line(this.x, this.y, targets.get(i).x, targets.get(i).y);
 			int value_tmp = (int)interactCount.get(targets.get(i)); // get target character's interact counts in episode
-		}
+		} */
 	}
+	
 	//clear
 	public void addTarget(Character target, int value){
 		targets.add(target);
@@ -66,7 +67,9 @@ public float gety(){
 	
 	return this.y;
 }
-
+public int getwidth(Character i){
+	return  (int)interactCount.get(i); 
+}
 public String getname(){
 		
 		return this.name;
